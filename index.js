@@ -26,6 +26,25 @@ async function run() {
             const query = { category_id };
             const product = await productCollection.find(query).toArray();
             res.send(product);
+        });
+
+        app.get('/products', async (req, res) => {
+            const query = {};
+            const product = await productCollection.find(query).toArray();
+            res.send(product);
+        })
+
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        })
+
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'seller' });
         })
 
         app.post('/users', async (req, res) => {
@@ -44,4 +63,4 @@ app.get('/', async (req, res) => {
     res.send('selby server is running');
 })
 
-app.listen(port, () => console.log(`Selby running on ${port}`))
+app.listen(port, () => console.log(`Selby running on port ${port}`))
