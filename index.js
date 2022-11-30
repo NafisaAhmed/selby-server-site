@@ -47,12 +47,16 @@ async function run() {
             const myproducts = await productCollection.find(query).toArray();
             res.send(myproducts);
         })
-        //-------------------users--------------------
-        app.get('/users', async (req, res) => {
-            const query = {};
-            const user = await usersCollection.find(query).toArray();
-            res.send(user);
+
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
         })
+
+        //-------------------users--------------------
+
 
         app.get('/users/seller/:email', async (req, res) => {
             const email = req.params.email;
@@ -67,6 +71,26 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
+        app.get('/users/:id', async (req, res) => {
+            const role = req.params.id;
+            const query = { role };
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        });
+
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
         //------------------advertise-------------------
 
         app.get('/advertise', async (req, res) => {
