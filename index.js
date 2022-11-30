@@ -34,6 +34,12 @@ async function run() {
             res.send(product);
         })
 
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        })
+
         app.get('/users', async (req, res) => {
             const query = {};
             const user = await usersCollection.find(query).toArray();
@@ -44,7 +50,7 @@ async function run() {
             const email = req.params.email;
             const query = { email };
             const user = await usersCollection.findOne(query);
-            res.send({ isSeller: user?.role === 'seller' });
+            res.send({ isSeller: user?.role === 'seller' })
         })
 
         app.post('/users', async (req, res) => {
