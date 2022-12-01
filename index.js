@@ -21,6 +21,7 @@ async function run() {
         const productCollection = client.db('selbyFurniture').collection('products');
         const usersCollection = client.db('selbyFurniture').collection('users');
         const advertiseCollection = client.db('selbyFurniture').collection('advertise');
+        const bookedProductsCollection = client.db('selbyFurniture').collection('bookedProducts');
 
         app.get('/category/:id', async (req, res) => {
             const category_id = req.params.id;
@@ -63,6 +64,13 @@ async function run() {
             const query = { email };
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' })
+        })
+
+        app.get('/users/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isBuyer: user?.role === 'buyer' })
         })
 
 
@@ -145,6 +153,20 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await advertiseCollection.deleteOne(query);
             res.send(result);
+        })
+
+        //--------------------booked products--------------------
+
+        app.post('/bookedproducts', async (req, res) => {
+            const product = req.body;
+            const result = await bookedProductsCollection.insertOne(product);
+            res.send(result);
+        })
+
+        app.get('/bookedproducts', async (req, res) => {
+            const query = {};
+            const product = await advertiseCollection.find(query).toArray();
+            res.send(product);
         })
     }
     finally {
