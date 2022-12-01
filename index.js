@@ -65,6 +65,13 @@ async function run() {
             res.send({ isSeller: user?.role === 'seller' })
         })
 
+
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        })
+
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
@@ -85,10 +92,31 @@ async function run() {
             res.send(user);
         });
 
+        app.get('/users/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        })
+
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.put('/users/seller/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body.status;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    status: status
+                }
+            }
+            const result = await usersCollection.updateOne(query, updatedDoc, options);
             res.send(result);
         })
         //------------------advertise-------------------
