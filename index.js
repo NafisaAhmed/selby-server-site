@@ -99,9 +99,23 @@ async function run() {
             res.send(product);
         })
 
+        app.get('/advertise/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const myproducts = await advertiseCollection.find(query).toArray();
+            res.send(myproducts);
+        })
+
         app.post('/advertise', async (req, res) => {
             const product = req.body;
             const result = await advertiseCollection.insertOne(product);
+            res.send(result);
+        })
+
+        app.delete('/advertise/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await advertiseCollection.deleteOne(query);
             res.send(result);
         })
     }
