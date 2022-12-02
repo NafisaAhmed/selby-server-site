@@ -22,6 +22,7 @@ async function run() {
         const usersCollection = client.db('selbyFurniture').collection('users');
         const advertiseCollection = client.db('selbyFurniture').collection('advertise');
         const bookedProductsCollection = client.db('selbyFurniture').collection('bookedProducts');
+        const reportedProductCollection = client.db('selbyFurniture').collection('reportedProducts');
 
         app.get('/category/:id', async (req, res) => {
             const category_id = req.params.id;
@@ -163,10 +164,39 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/bookedproducts', async (req, res) => {
+        app.get('/bookedproducts/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const myorders = await bookedProductsCollection.find(query).toArray();
+            res.send(myorders);
+        })
+
+        app.delete('/bookedproducts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookedProductsCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        //------------------------reported products---------------------------
+
+        app.get('/reportedproducts', async (req, res) => {
             const query = {};
-            const product = await advertiseCollection.find(query).toArray();
+            const product = await reportedProductCollection.find(query).toArray();
             res.send(product);
+        })
+
+        app.post('/reportedproducts', async (req, res) => {
+            const product = req.body;
+            const result = await reportedProductCollection.insertOne(product);
+            res.send(result);
+        })
+
+        app.delete('/reportedproducts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reportedProductCollection.deleteOne(query);
+            res.send(result);
         })
     }
     finally {
